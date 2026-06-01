@@ -818,7 +818,7 @@ const gN = k => parseInt(P[k] || CFG[k]);
     gio + ', ' + thu + ' - ' + ngay + '.' + String(thang).padStart(2,'0') + '.' + nam;
 
   /* Ảnh */
-  loadAnh(ten);
+ // loadAnh(ten);
 
   /* Title */
   document.title = 'Thiệp tốt nghiệp — ' + ten;
@@ -830,8 +830,11 @@ function loadAnh(ten) {
   if (P.imgKey)  src = localStorage.getItem(P.imgKey) || sessionStorage.getItem(P.imgKey);
   if (!src && P.anhUrl)    src = P.anhUrl;
   if (!src && CFG.anhUrl)  src = CFG.anhUrl;
+
+  const av = document.getElementById('heroAvatar');
+  if (!av) return; // ⭐ THÊM DÒNG NÀY
+
   if (src) {
-    const av  = document.getElementById('heroAvatar');
     const img = document.createElement('img');
     img.src = src;
     img.alt = ten;
