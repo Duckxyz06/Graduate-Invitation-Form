@@ -183,7 +183,27 @@ body {
     radial-gradient(1px 1px at 30% 50%, rgba(100,180,255,.5) 0%, transparent 100%),
     radial-gradient(2px 2px at 85% 40%, rgba(200,150,255,.4) 0%, transparent 100%);
 }
-
+}
+.hero-avatar-ring {
+  width: 100%; height: 100%; border-radius: 50%;
+  padding: 4px;
+  background: conic-gradient(from 0deg, var(--c2), var(--c3), var(--gold), var(--c2));
+  animation: spin 8s linear infinite;
+  box-shadow: 0 0 30px rgba(53,88,255,.5), 0 0 60px rgba(140,82,255,.3);
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.hero-avatar-inner {
+  width: 100%; height: 100%; border-radius: 50%;
+  background: var(--glass-bg);
+  backdrop-filter: blur(4px);
+  border: 3px solid rgba(255,255,255,.2);
+  overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 72px;
+}
+.hero-avatar-inner img {
+  width:100%; height:100%; object-fit:cover; border-radius:50%;
+}
 /* Gold diploma decoration */
 .hero-diploma {
   position:absolute; bottom:30%; right:16px; z-index:9;
