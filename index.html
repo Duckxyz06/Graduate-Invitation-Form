@@ -492,10 +492,6 @@ function createCard() {
     }
     el.style.borderColor = '';
   }
-  if (!localStorage.getItem('gradcard_img')) {
-    alert('⚠️ Vui lòng chọn ảnh tốt nghiệp');
-    return;
-  }
 
   /* Build date info */
   const d     = new Date(document.getElementById('ngayToChuc').value);
