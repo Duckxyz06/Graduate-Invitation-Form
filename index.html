@@ -385,19 +385,6 @@ window.addEventListener('scroll', () => {
 /* ══════════════════════════════════════════
    PREVIEW ẢNH + LƯU localStorage
 ══════════════════════════════════════════ */
-function previewImg(input) {
-  if (!input.files || !input.files[0]) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    const prev = document.getElementById('imgPreview');
-    prev.src = e.target.result;
-    prev.style.display = 'block';
-    document.getElementById('uploadIcon').style.display = 'none';
-    document.getElementById('uploadText').style.display = 'none';
-    localStorage.setItem('gradcard_img', e.target.result);
-  };
-  reader.readAsDataURL(input.files[0]);
-}
 
 /* ── Drag & drop ── */
 
