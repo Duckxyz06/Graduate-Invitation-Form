@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tạo Thiệp Tốt Nghiệp — by Nguyễn Việt Đức</title>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;600;700;800&family=Dancing+Script:wght@600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════
+   TOKENS — khớp hoàn toàn với thiep-v2.html
+══════════════════════════════════════════ */
+:root {
+  --c1:#0D1E8A; --c2:#3558FF; --c3:#8C52FF;
+  --gold:#FFD700;
+  --aurora:linear-gradient(135deg,#3B82F6 0%,#8B5CF6 50%,#EC4899 100%);
+  --glass-bg:rgba(255,255,255,0.08);
+  --glass-border:rgba(255,255,255,0.15);
+  --glass-shadow:0 8px 32px rgba(31,38,135,0.25);
+  --page-bg:#060B2E;
+  --text:#fff;
+  --text-muted:rgba(255,255,255,0.60);
+  --radius:16px; --radius-lg:20px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--page-bg);font-family:'Inter','Be Vietnam Pro',sans-serif;color:var(--text);min-height:100vh;overflow-x:hidden;}
+
+/* ── ORBS ── */
+.orb-wrap{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
+.orb{position:absolute;border-radius:50%;filter:blur(70px);opacity:.28;animation:floatOrb var(--d,12s) ease-in-out infinite alternate;}
+.orb-a{width:380px;height:380px;top:-120px;left:-80px;background:radial-gradient(circle at 30% 30%,#fff,#3558FF);--d:14s;}
+.orb-b{width:280px;height:280px;top:45%;right:-60px;background:radial-gradient(circle at 30% 30%,#fff,#8C52FF);--d:11s;animation-delay:-5s;}
+.orb-c{width:220px;height:220px;bottom:15%;left:-40px;background:radial-gradient(circle at 30% 30%,#fff,#00C2FF);--d:16s;animation-delay:-9s;}
+@keyframes floatOrb{from{transform:translateY(0) scale(1);}to{transform:translateY(-44px) scale(1.1);}}
+
+/* ── SCROLL PROGRESS ── */
+.scroll-prog{position:fixed;top:0;left:0;height:2px;z-index:9999;background:var(--aurora);width:0%;transition:width .1s linear;}
+
+/* ── TOP BAR ── */
+.topbar{
+  position:sticky;top:0;z-index:900;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 20px;
+  background:rgba(6,11,46,.65);
+  backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--glass-border);
+}
+.topbar-brand{font-family:'Be Vietnam Pro',sans-serif;font-size:18px;font-weight:800;
+  background:var(--aurora);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.topbar-sub{font-size:10px;color:var(--text-muted);letter-spacing:2px;text-transform:uppercase;margin-top:1px;}
+
+/* ── HERO BANNER ── */
+.hero-banner{
+  position:relative;padding:52px 24px 44px;text-align:center;overflow:hidden;
+}
+.hero-banner::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(53,88,255,.18) 0%,rgba(140,82,255,.12) 100%);
+  pointer-events:none;
+}
+.hero-badge{
+  display:inline-block;
+  background:rgba(255,215,0,.12);border:1px solid rgba(255,215,0,.3);
+  border-radius:100px;padding:6px 16px;
+  font-family:'Be Vietnam Pro',sans-serif;font-size:11px;font-weight:700;
+  letter-spacing:2px;text-transform:uppercase;color:var(--gold);
+  margin-bottom:16px;
+}
+.hero-title{
+  font-family:'Be Vietnam Pro',sans-serif;font-size:34px;font-weight:800;
+  line-height:1.1;margin-bottom:10px;
+  background:var(--aurora);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.hero-desc{font-size:14px;color:var(--text-muted);line-height:1.7;max-width:380px;margin:0 auto;}
+
+/* ── CONTAINER ── */
+.wrap{max-width:600px;margin:0 auto;padding:28px 16px 60px;position:relative;z-index:1;}
+
+/* ── STEPS ── */
+.steps{display:flex;justify-content:center;margin-bottom:28px;}
+.step{display:flex;flex-direction:column;align-items:center;flex:1;position:relative;}
+.step:not(:last-child)::after{content:'';position:absolute;top:14px;left:50%;width:100%;height:2px;background:var(--glass-border);z-index:0;}
+.step.done::after,.step.active::after{background:var(--c2);}
+.step-num{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.12);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;position:relative;z-index:1;transition:background .3s;border:1px solid var(--glass-border);}
+.step.done .step-num,.step.active .step-num{background:var(--c2);border-color:var(--c2);}
+.step-label{font-size:10px;margin-top:5px;color:var(--text-muted);letter-spacing:.5px;text-transform:uppercase;font-family:'Be Vietnam Pro',sans-serif;}
+.step.active .step-label{color:var(--c3);font-weight:700;}
+
+/* ── GLASS CARD ── */
+.card{
+  background:var(--glass-bg);
+  backdrop-filter:blur(20px);
+  border:1px solid var(--glass-border);
+  border-radius:var(--radius-lg);
+  box-shadow:var(--glass-shadow);
+  padding:24px 20px;margin-bottom:16px;
+}
+.card-title{
+  font-family:'Be Vietnam Pro',sans-serif;font-size:16px;font-weight:700;
+  color:#fff;margin-bottom:20px;padding-bottom:12px;
+  border-bottom:1px solid var(--glass-border);
+  display:flex;align-items:center;gap:10px;
+}
+.card-title .icon{font-size:18px;}
+
+/* ── FIELDS ── */
+.field{margin-bottom:18px;}
+.label{font-family:'Be Vietnam Pro',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;display:block;}
+.label span{color:#f87171;margin-left:2px;}
+.input,.textarea{
+  width:100%;
+  background:rgba(0,0,0,.25);
+  border:1px solid var(--glass-border);
+  border-radius:12px;
+  padding:12px 16px;font-size:15px;
+  font-family:'Inter',sans-serif;color:#fff;
+  outline:none;transition:border-color .2s;
+}
+.input::placeholder,.textarea::placeholder{color:rgba(255,255,255,.3);}
+.input:focus,.textarea:focus{border-color:var(--c2);}
+.textarea{resize:vertical;min-height:100px;line-height:1.6;}
+.hint{font-size:12px;color:var(--text-muted);margin-top:6px;line-height:1.5;}
+
+/* ── UPLOAD ẢNH ── */
+.upload-area{
+  border:2px dashed var(--glass-border);border-radius:14px;
+  padding:36px 20px;text-align:center;cursor:pointer;
+  transition:all .2s;position:relative;overflow:hidden;
+}
+.upload-area:hover,.upload-area.drag{border-color:var(--c2);background:rgba(53,88,255,.08);}
+.upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.upload-icon{font-size:40px;margin-bottom:10px;display:block;}
+.upload-text{font-size:14px;color:var(--text-muted);line-height:1.6;}
+.upload-preview{
+  width:110px;height:110px;border-radius:50%;object-fit:cover;
+  border:3px solid var(--c2);margin:0 auto 10px;display:none;
+  box-shadow:0 0 20px rgba(53,88,255,.4);
+}
+
+/* ── NHẠC NỀN ── */
+.music-card{
+  background:linear-gradient(135deg,rgba(53,88,255,.15),rgba(140,82,255,.12));
+  border:1px solid rgba(255,215,0,.2);
+  border-radius:var(--radius-lg);
+  padding:20px;margin-bottom:16px;
+}
+.music-title{font-family:'Be Vietnam Pro',sans-serif;font-size:16px;font-weight:700;color:#fff;margin-bottom:6px;display:flex;align-items:center;gap:8px;}
+.music-desc{font-size:12px;color:var(--text-muted);margin-bottom:14px;line-height:1.6;}
+.music-input-row{display:flex;gap:8px;align-items:center;}
+.music-input-row .input{flex:1;margin-bottom:0;}
+.btn-test{
+  background:rgba(255,215,0,.15);border:1px solid rgba(255,215,0,.3);
+  border-radius:10px;padding:12px 16px;
+  font-family:'Be Vietnam Pro',sans-serif;font-size:13px;font-weight:700;
+  color:var(--gold);cursor:pointer;white-space:nowrap;transition:background .2s;
+}
+.btn-test:hover{background:rgba(255,215,0,.25);}
+.music-status{font-size:12px;color:var(--text-muted);margin-top:8px;min-height:18px;}
+
+/* ── BUTTONS ── */
+.btn-create{
+  width:100%;border:none;border-radius:14px;padding:18px;
+  background:var(--aurora);
+  font-family:'Be Vietnam Pro',sans-serif;font-size:17px;font-weight:800;
+  color:#fff;cursor:pointer;letter-spacing:.5px;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  box-shadow:0 4px 24px rgba(53,88,255,.4);
+  transition:opacity .2s,transform .2s;
+}
+.btn-create:hover{opacity:.9;transform:translateY(-1px);}
+.btn-create:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+
+/* ── RESULT ── */
+.result-card{
+  display:none;
+  background:var(--glass-bg);backdrop-filter:blur(20px);
+  border:1px solid rgba(255,215,0,.3);
+  border-radius:var(--radius-lg);padding:28px 20px;
+  box-shadow:0 0 40px rgba(255,215,0,.08);
+  text-align:center;margin-top:16px;
+}
+.result-title{font-family:'Dancing Script',cursive;font-size:28px;color:var(--gold);margin-bottom:8px;}
+.result-sub{font-size:13px;color:var(--text-muted);margin-bottom:16px;}
+.result-link-box{
+  background:rgba(0,0,0,.3);border:1px solid var(--glass-border);
+  border-radius:10px;padding:12px 16px;font-size:12px;
+  word-break:break-all;color:rgba(255,255,255,.7);
+  margin-bottom:16px;text-align:left;line-height:1.6;
+}
+.btn-row-result{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+.btn-copy,.btn-open{
+  border:none;border-radius:10px;padding:12px 22px;
+  font-family:'Be Vietnam Pro',sans-serif;font-size:14px;font-weight:700;
+  cursor:pointer;transition:opacity .2s;
+}
+.btn-copy{background:rgba(255,215,0,.2);border:1px solid rgba(255,215,0,.3);color:var(--gold);}
+.btn-open{background:var(--aurora);color:#fff;}
+.btn-copy:hover,.btn-open:hover{opacity:.85;}
+
+/* ── HƯỚNG DẪN SHEET ── */
+.guide-wrap{margin-top:32px;position:relative;z-index:1;}
+.guide-title{font-family:'Be Vietnam Pro',sans-serif;font-size:20px;font-weight:800;color:#fff;margin-bottom:20px;display:flex;align-items:center;gap:8px;}
+.guide-step{
+  background:var(--glass-bg);backdrop-filter:blur(12px);
+  border:1px solid var(--glass-border);border-radius:var(--radius);
+  padding:18px 18px;margin-bottom:12px;
+  border-left:3px solid var(--c2);
+}
+.guide-step-title{font-family:'Be Vietnam Pro',sans-serif;font-size:14px;font-weight:700;color:#fff;margin-bottom:8px;}
+.guide-step p{font-size:13px;color:var(--text-muted);line-height:1.7;}
+.guide-step code{background:rgba(53,88,255,.2);border:1px solid rgba(53,88,255,.3);padding:2px 7px;border-radius:5px;font-size:12px;color:#93c5fd;}
+.guide-code{
+  background:rgba(0,0,0,.5);border:1px solid var(--glass-border);
+  border-radius:10px;padding:14px 16px;
+  font-size:12px;color:#a5f3fc;font-family:monospace;
+  overflow-x:auto;margin-top:10px;line-height:1.7;white-space:pre;
+}
+
+/* ── FOOTER ── */
+.footer{position:relative;z-index:1;text-align:center;padding:20px;font-size:12px;color:rgba(255,255,255,.25);letter-spacing:1px;}
+.footer strong{color:var(--c3);}
+</style>
+</head>
+<body>
+
+<!-- Scroll progress -->
+<div class="scroll-prog" id="scrollProg"></div>
+
+<!-- Orbs background -->
+<div class="orb-wrap">
+  <div class="orb orb-a"></div>
+  <div class="orb orb-b"></div>
+  <div class="orb orb-c"></div>
+</div>
+
+<!-- ══ TOP BAR ══ -->
+<div class="topbar">
+  <div>
+    <div class="topbar-brand">🎓 GradCard</div>
+    <div class="topbar-sub">by Nguyễn Việt Đức</div>
+  </div>
+</div>
+
+<!-- ══ HERO ══ -->
+<div class="hero-banner">
+  <div class="hero-badge">✨ Graduate-Dthu V2</div>
+  <div class="hero-title">Tạo Thiệp Tốt Nghiệp</div>
+  <div class="hero-desc">Điền thông tin bên dưới — thiệp Aurora đẹp sẽ được tạo tự động và bạn nhận link chia sẻ ngay lập tức</div>
+</div>
+
+<div class="wrap">
+
+  <!-- Steps -->
+  <div class="steps">
+    <div class="step active" id="s1"><div class="step-num">1</div><div class="step-label">Thông tin</div></div>
+    <div class="step" id="s2"><div class="step-num">2</div><div class="step-label">Sự kiện</div></div>
+    <div class="step" id="s3"><div class="step-num">3</div><div class="step-label">Hoàn tất</div></div>
+  </div>
+
+  <!-- ══ CARD 1: THÔNG TIN CÁ NHÂN ══ -->
+  <div class="card">
+    <div class="card-title"><span class="icon">👤</span> Thông tin tân cử nhân</div>
+
+    <div class="field">
+      <label class="label">Họ và tên đầy đủ <span>*</span></label>
+      <input class="input" id="hoTen" type="text" placeholder="VD: Nguyễn Việt Đức">
+    </div>
+    <div class="field">
+      <label class="label">Chuyên ngành <span>*</span></label>
+      <input class="input" id="nganh" type="text" placeholder="VD: Ngôn ngữ Anh">
+    </div>
+    <div class="field">
+      <label class="label">Khoa / Bộ môn</label>
+      <input class="input" id="khoa" type="text" placeholder="VD: Khoa Ngoại ngữ">
+    </div>
+    <div class="field">
+      <label class="label">Trường <span>*</span></label>
+      <input class="input" id="truong" type="text" placeholder="VD: Trường Đại học Đồng Tháp">
+    </div>
+    <div class="field">
+      <label class="label">Ảnh tốt nghiệp <span>*</span></label>
+      <div class="upload-area" id="uploadArea">
+        <input type="file" id="anhFile" accept="image/*" onchange="previewImg(this)">
+        <img class="upload-preview" id="imgPreview" src="" alt="">
+        <span class="upload-icon" id="uploadIcon">📸</span>
+        <div class="upload-text" id="uploadText">Bấm hoặc kéo thả ảnh vào đây<br><small>JPG, PNG — tỉ lệ vuông hiển thị đẹp nhất</small></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ CARD 2: THÔNG TIN SỰ KIỆN ══ -->
+  <div class="card">
+    <div class="card-title"><span class="icon">📅</span> Thông tin buổi lễ</div>
+
+    <div class="field">
+      <label class="label">Ngày tổ chức <span>*</span></label>
+      <input class="input" id="ngayToChuc" type="date" value="2026-06-15">
+    </div>
+    <div class="field">
+      <label class="label">Giờ bắt đầu <span>*</span></label>
+      <input class="input" id="gioToChuc" type="time" value="09:00">
+    </div>
+    <div class="field">
+      <label class="label">Tên địa điểm <span>*</span></label>
+      <input class="input" id="diaDiem" type="text" placeholder="VD: Hội trường H1 - Trường Đại học Đồng Tháp">
+    </div>
+    <div class="field">
+      <label class="label">Địa chỉ chi tiết</label>
+      <input class="input" id="diaChiChiTiet" type="text" placeholder="VD: 783 Phạm Hữu Lầu, Phường Cao Lãnh, Tỉnh Đồng Tháp">
+    </div>
+    <div class="field">
+      <label class="label">Số điện thoại liên hệ</label>
+      <input class="input" id="sdt" type="tel" placeholder="VD: 0769777860">
+    </div>
+  </div>
+
+  <!-- ══ CARD 3: LỜI MỜI ══ -->
+  <div class="card">
+    <div class="card-title"><span class="icon">✍️</span> Lời mời</div>
+    <div class="field">
+      <label class="label">Nội dung lời mời</label>
+      <textarea class="textarea" id="loiMoi" placeholder="VD: Thân mời quý thầy cô, gia đình, bạn bè...">Thân mời quý thầy cô, gia đình, bạn bè cùng những người thân yêu đến tham dự Lễ Tốt nghiệp của em để cùng chia sẻ niềm vui, lưu giữ những khoảnh khắc đáng nhớ và chúc mừng cho cột mốc trưởng thành đầy ý nghĩa này. Sự hiện diện của mọi người sẽ là niềm vinh hạnh và cũng là món quà quý giá nhất dành cho em trong ngày đặc biệt ấy ❤️</textarea>
+    </div>
+  </div>
+
+  <!-- ══ CARD 4: NHẠC NỀN ══ -->
+  <div class="music-card">
+    <div class="music-title">🎵 Nhạc nền thiệp</div>
+    <div class="music-desc">
+      Dán link trực tiếp tới file nhạc trên GitHub (hoặc bất kỳ URL mp3 nào).<br>
+      <strong>Cách lấy link GitHub:</strong> Vào file nhạc trên repo → nút <code>Raw</code> → copy URL trên thanh địa chỉ.
+    </div>
+    <div class="music-input-row">
+      <input class="input" id="musicUrl"
+             type="url"
+             placeholder="https://raw.githubusercontent.com/Duckxyz06/Graduate-Dthu/main/nhac-nen.mp3">
+      <button class="btn-test" onclick="testMusic()">▶ Thử</button>
+    </div>
+    <div class="music-status" id="musicStatus"></div>
+    <!-- Audio ẩn để test -->
+    <audio id="testAudio" style="display:none"></audio>
+  </div>
+
+  <!-- ══ CARD 5: GOOGLE SHEET ══ -->
+  <div class="card">
+    <div class="card-title"><span class="icon">📊</span> Kết nối Google Sheet (RSVP)</div>
+    <div class="field">
+      <label class="label">Google Apps Script URL <span>*</span></label>
+      <input class="input" id="scriptUrl" type="url" placeholder="https://script.google.com/macros/s/...">
+      <div class="hint">⚙️ Xem hướng dẫn setup bên dưới. Bỏ trống nếu chưa cần RSVP.</div>
+    </div>
+  </div>
+
+  <!-- ══ NÚT TẠO THIỆP ══ -->
+  <button class="btn-create" id="btnCreate" onclick="createCard()">
+    <span>✨</span> Tạo thiệp ngay
+  </button>
+
+  <!-- ══ KẾT QUẢ ══ -->
+  <div class="result-card" id="resultCard">
+    <div style="font-size:52px;margin-bottom:8px;">🎉</div>
+    <div class="result-title">Thiệp đã được tạo!</div>
+    <div class="result-sub">Sao chép link bên dưới và chia sẻ cho khách mời:</div>
+    <div class="result-link-box" id="resultLink"></div>
+    <div class="btn-row-result">
+      <button class="btn-copy" onclick="copyLink()">📋 Sao chép link</button>
+      <button class="btn-open" onclick="openCard()">🔗 Mở thiệp</button>
+    </div>
+  </div>
+
+  <!-- ══ HƯỚNG DẪN GOOGLE SHEET ══ -->
+  <div class="guide-wrap">
+    <div class="guide-title">⚙️ Hướng dẫn Setup Google Sheet RSVP</div>
+
+    <div class="guide-step">
+      <div class="guide-step-title">Bước 1 — Tạo Google Sheet</div>
+      <p>Vào <strong>sheets.google.com</strong> → Tạo bảng mới. Hàng đầu tiên nhập 4 cột:
+        <code>Timestamp</code> <code>Tên</code> <code>Tham dự</code> <code>Thiệp</code>
+      </p>
+    </div>
+
+    <div class="guide-step">
+      <div class="guide-step-title">Bước 2 — Tạo Apps Script</div>
+      <p>Trong Sheet → <strong>Extensions → Apps Script</strong> → xoá code cũ → dán:</p>
+      <div class="guide-code">function doPost(e) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  var data  = JSON.parse(e.postData.contents);
+  sheet.appendRow([
+    new Date().toLocaleString('vi-VN'),
+    data.ten, data.thamDu, data.thiep
+  ]);
+  return ContentService
+    .createTextOutput(JSON.stringify({ok:true}))
+    .setMimeType(ContentService.MimeType.JSON);
+}</div>
+    </div>
+
+    <div class="guide-step">
+      <div class="guide-step-title">Bước 3 — Deploy</div>
+      <p><strong>Deploy → New deployment → Web app</strong><br>
+         Execute as: <em>Me</em> &nbsp;·&nbsp; Who has access: <em>Anyone</em><br>
+         → Deploy → Authorize → Copy <strong>URL</strong> → dán vào ô Script URL bên trên.</p>
+    </div>
+
+    <div class="guide-step">
+      <div class="guide-step-title">Bước 4 — Upload nhạc lên GitHub</div>
+      <p>Kéo file <code>.mp3</code> vào repo GitHub → Commit → Mở file → bấm <strong>Raw</strong> → copy URL → dán vào ô Nhạc nền bên trên.</p>
+    </div>
+  </div>
+
+</div><!-- /wrap -->
+
+<div class="footer">© 2026 GradCard · Thiết kế bởi <strong>Nguyễn Việt Đức</strong> · All rights reserved</div>
+
+<script>
+/* ══════════════════════════════════════════
+   SCROLL PROGRESS
+══════════════════════════════════════════ */
+window.addEventListener('scroll', () => {
+  const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
+  document.getElementById('scrollProg').style.width = pct + '%';
+}, { passive: true });
+
+/* ══════════════════════════════════════════
+   PREVIEW ẢNH + LƯU localStorage
+══════════════════════════════════════════ */
+function previewImg(input) {
+  if (!input.files || !input.files[0]) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const prev = document.getElementById('imgPreview');
+    prev.src = e.target.result;
+    prev.style.display = 'block';
+    document.getElementById('uploadIcon').style.display = 'none';
+    document.getElementById('uploadText').style.display = 'none';
+    localStorage.setItem('gradcard_img', e.target.result);
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+
+/* ── Drag & drop ── */
+const ua = document.getElementById('uploadArea');
+ua.addEventListener('dragover', e => { e.preventDefault(); ua.classList.add('drag'); });
+ua.addEventListener('dragleave', () => ua.classList.remove('drag'));
+ua.addEventListener('drop', e => {
+  e.preventDefault(); ua.classList.remove('drag');
+  const f = e.dataTransfer.files[0];
+  if (f && f.type.startsWith('image/')) {
+    const inp = document.getElementById('anhFile');
+    const dt  = new DataTransfer(); dt.items.add(f); inp.files = dt.files;
+    previewImg(inp);
+  }
+});
+
+/* ══════════════════════════════════════════
+   THỬ NHẠC
+══════════════════════════════════════════ */
+function testMusic() {
+  const url    = document.getElementById('musicUrl').value.trim();
+  const status = document.getElementById('musicStatus');
+  const audio  = document.getElementById('testAudio');
+  if (!url) { status.textContent = '⚠️ Vui lòng nhập link nhạc trước.'; return; }
+  status.textContent = '⏳ Đang kiểm tra...';
+  audio.src  = url;
+  audio.load();
+  audio.oncanplaythrough = () => {
+    status.textContent = '✅ Link nhạc hoạt động tốt!';
+    audio.pause(); audio.currentTime = 0;
+  };
+  audio.onerror = () => {
+    status.textContent = '❌ Không tải được nhạc. Kiểm tra lại URL (phải là link Raw từ GitHub).';
+  };
+  audio.play().catch(() => {
+    status.textContent = '⚠️ Trình duyệt chặn autoplay — nhưng link có thể vẫn đúng. Mở thiệp để kiểm tra.';
+  });
+}
+
+/* ══════════════════════════════════════════
+   TẠO THIỆP
+   — Các field bắt buộc: hoTen, nganh, truong, ngayToChuc, gioToChuc, diaDiem
+   — scriptUrl KHÔNG bắt buộc (để trống cũng chạy được)
+══════════════════════════════════════════ */
+function createCard() {
+  /* Validate bắt buộc */
+  const required = {
+    hoTen:      'Họ và tên',
+    nganh:      'Chuyên ngành',
+    truong:     'Trường',
+    ngayToChuc: 'Ngày tổ chức',
+    gioToChuc:  'Giờ bắt đầu',
+    diaDiem:    'Địa điểm'
+  };
+  for (const [id, label] of Object.entries(required)) {
+    const el = document.getElementById(id);
+    if (!el || !el.value.trim()) {
+      el.focus();
+      el.style.borderColor = '#f87171';
+      alert('⚠️ Vui lòng điền: ' + label);
+      return;
+    }
+    el.style.borderColor = '';
+  }
+  if (!localStorage.getItem('gradcard_img')) {
+    alert('⚠️ Vui lòng chọn ảnh tốt nghiệp');
+    return;
+  }
+
+  /* Build date info */
+  const d     = new Date(document.getElementById('ngayToChuc').value);
+  const days  = ['Chủ nhật','Thứ hai','Thứ ba','Thứ tư','Thứ năm','Thứ sáu','Thứ bảy'];
+  const thu   = days[d.getDay()];
+  const ngay  = d.getDate();
+  const thang = d.getMonth() + 1;
+  const nam   = d.getFullYear();
+
+  /* Lưu ảnh vào localStorage với key riêng (bền cross-tab) */
+  const imgKey = 'gc_' + Date.now();
+  localStorage.setItem(imgKey, localStorage.getItem('gradcard_img'));
+
+  /* Build URL params — tên param khớp 100% với thiep-v2.html */
+  const params = new URLSearchParams({
+    ten:            document.getElementById('hoTen').value.trim(),
+    nganh:          document.getElementById('nganh').value.trim(),
+    khoa:           document.getElementById('khoa').value.trim(),
+    truong:         document.getElementById('truong').value.trim(),
+    gio:            document.getElementById('gioToChuc').value,
+    thu, ngay, thang, nam,
+    diaDiem:        document.getElementById('diaDiem').value.trim(),
+    diaChiChiTiet:  document.getElementById('diaChiChiTiet').value.trim(),
+    sdt:            document.getElementById('sdt').value.trim(),
+    loiMoi:         document.getElementById('loiMoi').value.trim(),
+    script:         document.getElementById('scriptUrl').value.trim(),
+    musicUrl:       document.getElementById('musicUrl').value.trim(),
+    imgKey
+  });
+
+  /* Tạo link đầy đủ */
+  const base     = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
+  const fullLink = base + 'thiep.html?' + params.toString();
+  window._cardLink = fullLink;
+
+  document.getElementById('resultLink').textContent = fullLink;
+  const rc = document.getElementById('resultCard');
+  rc.style.display = 'block';
+  rc.scrollIntoView({ behavior: 'smooth' });
+
+  /* Steps */
+  document.getElementById('s1').classList.add('done');
+  document.getElementById('s2').classList.add('done');
+  document.getElementById('s3').classList.add('active');
+}
+
+function copyLink() {
+  navigator.clipboard.writeText(document.getElementById('resultLink').textContent)
+    .then(() => alert('✅ Đã sao chép link!'));
+}
+function openCard() {
+  window.open(window._cardLink, '_blank');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thiệp Tốt Nghiệp — Đại học Đồng Tháp</title>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;600;700;800&family=Dancing+Script:wght@600;700&family=Inter:wght@300;400;500&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════
+   TOKENS & THEME SYSTEM
+══════════════════════════════════════════ */
+:root {
+  --c1: #0D1E8A;
+  --c2: #3558FF;
+  --c3: #8C52FF;
+  --c4: #6E00FF;
+  --c5: #00C2FF;
+  --gold: #FFD700;
+  --gold2: #C9A84C;
+  --aurora: linear-gradient(135deg, #3B82F6 0%, #8B5CF6 50%, #EC4899 100%);
+  --glass-bg: rgba(255,255,255,0.10);
+  --glass-border: rgba(255,255,255,0.20);
+  --glass-shadow: 0 8px 32px rgba(31,38,135,0.25);
+  --text-white: #ffffff;
+  --text-muted: rgba(255,255,255,0.70);
+  --text-dark: #0D1233;
+  --page-bg: #060B2E;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+}
+/* ── Themes ── */
+[data-theme="gold"] {
+  --c1:#6B3A00; --c2:#C9841A; --c3:#E8B84B; --c4:#FFD700; --c5:#FFF0A0;
+  --aurora: linear-gradient(135deg,#C9841A,#E8B84B,#FFD700);
+  --page-bg:#1A0F00;
+}
+[data-theme="purple"] {
+  --c1:#2D006B; --c2:#6E00FF; --c3:#A855F7; --c4:#C084FC; --c5:#E879F9;
+  --aurora: linear-gradient(135deg,#6E00FF,#A855F7,#EC4899);
+  --page-bg:#0D0020;
+}
+[data-theme="rose"] {
+  --c1:#7A0030; --c2:#DB2777; --c3:#EC4899; --c4:#F472B6; --c5:#FCA5A5;
+  --aurora: linear-gradient(135deg,#DB2777,#EC4899,#F97316);
+  --page-bg:#1A0010;
+}
+[data-theme="dark"] {
+  --c1:#1A1A1A; --c2:#374151; --c3:#6B7280; --c4:#9CA3AF; --c5:#D1D5DB;
+  --aurora: linear-gradient(135deg,#374151,#6B7280,#9CA3AF);
+  --page-bg:#0A0A0A;
+}
+
+/* ══════════════════════════════════════════
+   GLOBAL
+══════════════════════════════════════════ */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--page-bg);
+  font-family: 'Inter', 'Be Vietnam Pro', sans-serif;
+  color: var(--text-white);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+.page { max-width: 480px; margin: 0 auto; position: relative; }
+
+/* ══════════════════════════════════════════
+   FLOATING ORBS BACKGROUND
+══════════════════════════════════════════ */
+.orb-container {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+}
+.orb {
+  position: absolute; border-radius: 50%;
+  filter: blur(60px); opacity: 0.35;
+  animation: floatOrb var(--dur, 12s) ease-in-out infinite alternate;
+}
+.orb-1 {
+  width: 320px; height: 320px; top: -80px; left: -80px;
+  background: radial-gradient(circle at 30% 30%, #fff, var(--c2));
+  --dur: 14s;
+}
+.orb-2 {
+  width: 260px; height: 260px; top: 40%; right: -60px;
+  background: radial-gradient(circle at 30% 30%, #fff, var(--c3));
+  --dur: 11s; animation-delay: -4s;
+}
+.orb-3 {
+  width: 200px; height: 200px; bottom: 20%; left: -40px;
+  background: radial-gradient(circle at 30% 30%, #fff, var(--c5));
+  --dur: 16s; animation-delay: -8s;
+}
+@keyframes floatOrb {
+  from { transform: translateY(0) scale(1); }
+  to   { transform: translateY(-40px) scale(1.12); }
+}
+
+/* ══════════════════════════════════════════
+   PARTICLES CANVAS
+══════════════════════════════════════════ */
+#particles { position:fixed; inset:0; z-index:0; pointer-events:none; opacity:.5; }
+
+/* ══════════════════════════════════════════
+   MUSIC + THEME BAR
+══════════════════════════════════════════ */
+.topbar {
+  position: fixed; top: 0; left: 50%; transform: translateX(-50%);
+  width: 100%; max-width: 480px;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px 16px;
+  background: rgba(6,11,46,0.55);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--glass-border);
+  z-index: 999;
+}
+.topbar-logo {
+  display: flex; align-items: center; gap: 8px;
+}
+.topbar-logo img {
+  width: 32px; height: 32px; border-radius: 50%;
+  object-fit: cover;
+}
+.topbar-logo-text { font-family:'Be Vietnam Pro',sans-serif; font-size:12px; font-weight:700; line-height:1.3; }
+.topbar-logo-sub  { font-size:9px; opacity:.6; letter-spacing:1px; }
+.topbar-actions { display:flex; gap:8px; align-items:center; }
+.btn-music {
+  display:flex; align-items:center; gap:6px;
+  background: var(--glass-bg); border: 1px solid var(--glass-border);
+  border-radius: 100px; padding: 6px 12px;
+  font-family:'Be Vietnam Pro',sans-serif; font-size:12px; font-weight:600;
+  color:#fff; cursor:pointer; backdrop-filter:blur(10px);
+  transition: background .2s;
+}
+.btn-music:hover { background: rgba(255,255,255,.18); }
+.theme-dots { display:flex; gap:5px; }
+.theme-dot {
+  width:14px; height:14px; border-radius:50%;
+  border: 2px solid rgba(255,255,255,.3);
+  cursor:pointer; transition:transform .2s, border-color .2s;
+}
+.theme-dot:hover,.theme-dot.active { transform:scale(1.3); border-color:#fff; }
+.theme-dot[data-t="blue"]   { background:linear-gradient(135deg,#3558FF,#8C52FF); }
+.theme-dot[data-t="gold"]   { background:linear-gradient(135deg,#C9841A,#FFD700); }
+.theme-dot[data-t="purple"] { background:linear-gradient(135deg,#6E00FF,#EC4899); }
+.theme-dot[data-t="rose"]   { background:linear-gradient(135deg,#DB2777,#F97316); }
+.theme-dot[data-t="dark"]   { background:linear-gradient(135deg,#374151,#9CA3AF); }
+
+/* ══════════════════════════════════════════
+   SECTION 1 — HERO
+══════════════════════════════════════════ */
+.hero {
+  position: relative; min-height: 100svh;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 0 0 32px; overflow: hidden;
+  z-index: 1;
+}
+/* School photo full bleed */
+.hero-bg {
+  position: absolute; inset: 0; z-index: 0;
+}
+.hero-bg img {
+  width:100%; height:100%; object-fit:cover; object-position:center 20%;
+  filter: brightness(.45) saturate(1.2);
+}
+/* Aurora overlay */
+.hero-bg::after {
+  content:''; position:absolute; inset:0;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(13,30,138,.35) 30%,
+    rgba(6,11,46,.92) 80%,
+    var(--page-bg) 100%
+  );
+}
+/* Sparkles */
+.hero-sparks {
+  position:absolute; inset:0; z-index:1; pointer-events:none;
+  background:
+    radial-gradient(1.5px 1.5px at 20% 15%, rgba(255,255,255,.8) 0%, transparent 100%),
+    radial-gradient(1px 1px at 75% 10%, rgba(255,255,255,.6) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 55% 5%, rgba(255,255,255,.7) 0%, transparent 100%),
+    radial-gradient(1px 1px at 30% 50%, rgba(100,180,255,.5) 0%, transparent 100%),
+    radial-gradient(2px 2px at 85% 40%, rgba(200,150,255,.4) 0%, transparent 100%);
+}
+
+/* Avatar ring */
+.hero-avatar-wrap {
+  position: absolute; top: 72px; right: -4px; z-index: 10;
+  width: 210px; height: 210px;
+}
+.hero-avatar-ring {
+  width: 100%; height: 100%; border-radius: 50%;
+  padding: 4px;
+  background: conic-gradient(from 0deg, var(--c2), var(--c3), var(--gold), var(--c2));
+  animation: spin 8s linear infinite;
+  box-shadow: 0 0 30px rgba(53,88,255,.5), 0 0 60px rgba(140,82,255,.3);
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.hero-avatar-inner {
+  width: 100%; height: 100%; border-radius: 50%;
+  background: var(--glass-bg);
+  backdrop-filter: blur(4px);
+  border: 3px solid rgba(255,255,255,.2);
+  overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 72px;
+}
+.hero-avatar-inner img {
+  width:100%; height:100%; object-fit:cover; border-radius:50%;
+}
+
+/* Gold diploma decoration */
+.hero-diploma {
+  position:absolute; bottom:30%; right:16px; z-index:9;
+  font-size:32px; transform:rotate(15deg);
+  filter: drop-shadow(0 4px 8px rgba(255,215,0,.4));
+  animation: float2 4s ease-in-out infinite;
+}
+.hero-cap {
+  position:absolute; top:52%; left:12px; z-index:9;
+  font-size:28px; transform:rotate(-10deg);
+  animation: float2 5s ease-in-out infinite reverse;
+}
+@keyframes float2 {
+  0%,100%{transform:rotate(15deg) translateY(0);}
+  50%{transform:rotate(15deg) translateY(-8px);}
+}
+
+/* Hero content */
+.hero-content {
+  position: relative; z-index: 5; padding: 0 24px;
+}
+.hero-thu-moi {
+  font-family: 'Dancing Script', cursive;
+  font-size: 28px; font-weight: 600;
+  color: var(--gold);
+  margin-bottom: 4px;
+  text-shadow: 0 2px 16px rgba(255,215,0,.4);
+}
+.hero-title {
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 42px; font-weight: 800;
+  line-height: 1.05; letter-spacing: -1px;
+  background: var(--aurora);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 6px;
+}
+.hero-subtitle {
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 13px; font-weight: 600;
+  letter-spacing: 3px; text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 14px;
+}
+.hero-desc {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px; line-height: 1.7;
+  color: rgba(255,255,255,.75);
+  max-width: 240px;
+  margin-bottom: 20px;
+}
+.hero-name {
+  font-family: 'Dancing Script', cursive;
+  font-size: 30px; font-weight: 700;
+  color: var(--gold);
+  text-shadow: 0 2px 20px rgba(255,215,0,.5);
+  margin-bottom: 20px;
+}
+.btn-cta {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--aurora);
+  border: none; border-radius: 100px;
+  padding: 14px 28px;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 14px; font-weight: 700;
+  color: #fff; cursor: pointer; text-decoration: none;
+  box-shadow: 0 4px 24px rgba(53,88,255,.45);
+  transition: transform .2s, box-shadow .2s;
+}
+.btn-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(53,88,255,.6);
+}
+
+/* ══════════════════════════════════════════
+   SECTION 2 — INFO CARDS
+══════════════════════════════════════════ */
+.info-sec {
+  position: relative; z-index: 1;
+  padding: 32px 16px 24px;
+}
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--glass-shadow);
+  padding: 24px 20px;
+  margin-bottom: 16px;
+}
+.info-row {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  gap: 0;
+}
+.info-col {
+  text-align: center; padding: 8px 8px;
+  border-right: 1px solid var(--glass-border);
+}
+.info-col:last-child { border-right: none; }
+.info-icon {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: rgba(53,88,255,.25);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 8px; font-size: 16px;
+}
+.info-label {
+  font-family:'Be Vietnam Pro',sans-serif;
+  font-size: 9px; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--text-muted);
+  margin-bottom: 6px;
+}
+.info-val {
+  font-family:'Be Vietnam Pro',sans-serif;
+  font-size: 13px; font-weight: 700;
+  color: #fff; line-height: 1.4;
+}
+.info-sub {
+  font-family:'Inter',sans-serif;
+  font-size: 11px; color: var(--text-muted);
+  margin-top: 3px; line-height: 1.4;
+}
+
+/* ══════════════════════════════════════════
+   SECTION 3 — THƯ MỜI
+══════════════════════════════════════════ */
+.invite-sec {
+  position:relative; z-index:1;
+  padding: 0 16px 24px;
+}
+.invite-header {
+  display:flex; align-items:center; gap:12px; margin-bottom:16px;
+}
+.quote-icon {
+  font-family:'Dancing Script',cursive;
+  font-size:60px; line-height:1;
+  background:var(--aurora);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.invite-title {
+  font-family:'Dancing Script',cursive;
+  font-size:24px; font-weight:700;
+  color: var(--gold);
+}
+.invite-body {
+  font-family:'Inter',sans-serif;
+  font-size:14px; line-height:1.85;
+  color:rgba(255,255,255,.80);
+}
+
+/* ══════════════════════════════════════════
+   SECTION 4 — COUNTDOWN
+══════════════════════════════════════════ */
+.countdown-sec {
+  position:relative; z-index:1;
+  margin: 0 16px 24px;
+}
+.countdown-card {
+  background: linear-gradient(135deg, rgba(13,30,138,.7) 0%, rgba(140,82,255,.3) 100%);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  padding: 24px 20px 20px;
+  box-shadow: var(--glass-shadow);
+}
+.cd-label {
+  font-family:'Be Vietnam Pro',sans-serif;
+  font-size:11px; font-weight:700; letter-spacing:3px;
+  text-transform:uppercase; color:var(--text-muted);
+  display:flex; align-items:center; gap:6px;
+  margin-bottom:20px;
+}
+.cd-grid {
+  display:grid; grid-template-columns:repeat(4,1fr); gap:10px;
+  margin-bottom:18px;
+}
+.cd-box {
+  background:rgba(0,0,0,.3);
+  border:1px solid var(--glass-border);
+  border-radius:14px;
+  padding:14px 8px 10px;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+}
+.cd-box::before {
+  content:'';
+  position:absolute; inset:0;
+  background:linear-gradient(to bottom, rgba(255,255,255,.05) 0%, transparent 60%);
+  pointer-events:none;
+}
+.cd-num {
+  font-family:'Orbitron',monospace;
+  font-size:30px; font-weight:900;
+  color:#fff;
+  text-shadow:0 0 20px var(--c2), 0 0 40px var(--c3);
+  line-height:1;
+}
+.cd-unit {
+  font-family:'Be Vietnam Pro',sans-serif;
+  font-size:9px; font-weight:700; letter-spacing:2px;
+  text-transform:uppercase;
+  color:var(--text-muted);
+  margin-top:6px;
+}
+.cd-datetime {
+  display:flex; align-items:center; gap:8px;
+  font-family:'Be Vietnam Pro',sans-serif;
+  font-size:14px; font-weight:700; color:#fff;
+}
+.cd-datetime .cd-icon { font-size:16px; }
+
+/* ══════════════════════════════════════════
+   SECTION 5 — GIÁ TRỊ (4 ICONS)
+══════════════════════════════════════════ */
+.values-sec {
+  position:relative; z-index:1;
+  padding: 0 16px 24px;
+}
+.values-grid {
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+.val-card {
+  background:var(--glass-bg);
+  backdrop-filter:blur(20px);
+  border:1px solid var(--glass-border);
+  border-radius:var(--radius-lg);
+  padding:18px 14px;
+  text-align:center;
+  box-shadow:var(--glass-shadow);
+  transition:transform .2s;
+}
+.val-card:hover { transform:translateY(-3px); }
+.val-icon {
+  font-size:28px; margin-bottom:8px; display:block;
+}
+.val-title {
+  font-family:'Be Vietnam Pro',sans-serif;
+  font-size:11px; font-weight:700; letter-spacing:2px;
+  text-transform:uppercase; color:var(--c5);
+  margin-bottom:4px;
+}
+.val-desc {
+  font-family:'Inter',sans-serif;
+  font-size:12px; color:var(--text-muted); line-height:1.5;
+}
+
+/* ══════════════════════════════════════════
+   SECTION 6 — RSVP
+══════════════════════════════════════════ */
+.rsvp-sec {
+  position:relative; z-index:1;
+  margin: 0 0 0;
+}
+.rsvp-footer-bar {
+  display:flex; align-items:center; justify-content:space-between;
+  padding: 20px 20px 36px;
+  background: linear-gradient(to top, rgba(6,11,46,.95) 0%, transparent 100%);
+  position:relative; z-index:1;
+}
+/* fallback: full RSVP dialog */
+.rsvp-full {
+  position:relative; z-index:1;
+  margin: 0 16px 32px;
+}
+.rsvp-label {
+  font-family:'Dancing Script',cursive;
+  font-size:20px; font-weight:700;
+  color:var(--gold); line-height:1.3;
+}
+.rsvp-sub {
+  font-family:'Inter',sans-serif;
+  font-size:12px; color:var(--text-muted); margin-top:4px;
+}
+.btn-rsvp {
+  display:inline-flex; align-items:center; gap:8px;
+  background:var(--aurora);
+  border:none; border-radius:100px;
+  padding:15px 28px;
+  font-family:'Be Vietnam Pro',sans-serif;
+  font-size:14px; font-weight:700;
+  color:#fff; cursor:pointer;
+  box-shadow:0 4px 24px rgba(53,88,255,.5);
+  transition:transform .2s, box-shadow .2s;
+  white-space:nowrap;
+}
+.btn-rsvp:hover { transform:translateY(-2px); box-shadow:0 8px 32px rgba(53,88,255,.7); }
+
+/* RSVP Form */
+.rsvp-form-wrap {
+  background:var(--glass-bg);
+  backdrop-filter:blur(20px);
+  border:1px solid var(--glass-border);
+  border-radius:var(--radius-xl);
+  padding:28px 20px;
+  box-shadow:var(--glass-shadow);
+}
+.rsvp-form-title {
+  font-family:'Be Vietnam Pro',sans-serif;
+  font-size:20px; font-weight:800;
+  color:#fff; margin-bottom:20px;
+}
+.field-label {
+  font-family:'Be Vietnam Pro',sans-serif;
+  font-size:11px; font-weight:700; letter-spacing:1px;
+  text-transform:uppercase; color:var(--text-muted);
+  margin-bottom:7px; display:block;
+}
+.field-input {
+  width:100%;
+  background:rgba(0,0,0,.25);
+  border:1px solid var(--glass-border);
+  border-radius:12px;
+  padding:13px 16px;
+  font-size:15px; font-family:'Inter',sans-serif;
+  color:#fff; outline:none; margin-bottom:16px;
+  transition:border-color .2s;
+}
+.field-input::placeholder { color:rgba(255,255,255,.35); }
+.field-input:focus { border-color:var(--c2); }
+.radio-group { margin-bottom:20px; }
+.radio-opt {
+  display:flex; align-items:center; gap:12px;
+  padding:12px 16px; border-radius:12px;
+  border:1px solid var(--glass-border);
+  margin-bottom:8px; cursor:pointer;
+  font-family:'Inter',sans-serif; font-size:14px; color:#fff;
+  transition:background .2s, border-color .2s;
+}
+.radio-opt:hover { background:rgba(53,88,255,.15); border-color:var(--c2); }
+.radio-opt input { accent-color:var(--c2); width:16px; height:16px; }
+.btn-submit {
+  width:100%; background:var(--aurora);
+  border:none; border-radius:14px; padding:16px;
+  font-family:'Be Vietnam Pro',sans-serif;
+  font-size:16px; font-weight:800;
+  color:#fff; cursor:pointer; letter-spacing:1px;
+  box-shadow:0 4px 24px rgba(53,88,255,.4);
+  transition:opacity .2s, transform .2s;
+}
+.btn-submit:hover { opacity:.9; transform:translateY(-1px); }
+.rsvp-thanks {
+  display:none; text-align:center; margin-top:20px;
+  font-family:'Dancing Script',cursive;
+  font-size:22px; color:var(--gold); line-height:1.6;
+}
+.rsvp-err {
+  display:none; background:rgba(220,38,38,.2);
+  border:1px solid rgba(220,38,38,.4);
+  border-radius:10px; padding:10px 14px;
+  font-size:13px; color:#fca5a5; margin-top:10px;
+}
+
+/* ══════════════════════════════════════════
+   SCROLL ANIMATIONS
+══════════════════════════════════════════ */
+.reveal { opacity:0; transform:translateY(28px); transition:opacity .65s ease, transform .65s ease; }
+.reveal.show { opacity:1; transform:translateY(0); }
+.reveal-l { opacity:0; transform:translateX(-24px); transition:opacity .65s ease, transform .65s ease; }
+.reveal-l.show { opacity:1; transform:translateX(0); }
+
+/* ══════════════════════════════════════════
+   FOOTER
+══════════════════════════════════════════ */
+.footer {
+  position:relative; z-index:1;
+  text-align:center; padding:20px 16px 40px;
+  font-family:'Inter',sans-serif; font-size:12px;
+  color:rgba(255,255,255,.3); letter-spacing:1px;
+}
+.footer strong { color:var(--c3); }
+
+/* ══════════════════════════════════════════
+   SCROLL PROGRESS
+══════════════════════════════════════════ */
+.scroll-prog {
+  position:fixed; top:0; left:0; height:2px; z-index:9999;
+  background:var(--aurora); width:0%;
+  transition:width .1s linear;
+}
+</style>
+</head>
+<body>
+
+<!-- Progress bar -->
+<div class="scroll-prog" id="scrollProg"></div>
+
+<!-- Particles -->
+<canvas id="particles"></canvas>
+
+<!-- Orbs -->
+<div class="orb-container">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+</div>
+
+<!-- Audio -->
+<audio id="bgAudio" loop><source src="nhac-nen.mp3" type="audio/mpeg"></audio>
+
+<!-- Top bar -->
+<div class="topbar">
+  <div class="topbar-logo">
+    <div class="topbar-logo-text">
+      TRƯỜNG ĐẠI HỌC<br>
+      <span style="font-size:14px;font-weight:800;color:#fff;">ĐỒNG THÁP</span>
+      <div class="topbar-logo-sub">DONG THAP UNIVERSITY</div>
+    </div>
+  </div>
+  <div class="topbar-actions">
+    <div class="theme-dots" id="themeDots">
+      <div class="theme-dot active" data-t="blue" title="Blue"></div>
+      <div class="theme-dot" data-t="gold" title="Gold"></div>
+      <div class="theme-dot" data-t="purple" title="Purple"></div>
+      <div class="theme-dot" data-t="rose" title="Rose"></div>
+      <div class="theme-dot" data-t="dark" title="Dark"></div>
+    </div>
+    <button class="btn-music" id="musicBtn" onclick="toggleMusic()">🎵 Bật nhạc</button>
+  </div>
+</div>
+
+<div class="page">
+
+  <!-- ══ HERO ══ -->
+  <section class="hero">
+    <div class="hero-bg">
+      <img src="1200px-DTU_main_entrance.jpg"
+           onerror="this.parentElement.style.background='linear-gradient(135deg,#0D1E8A,#3558FF,#8C52FF)';this.remove()"
+           alt="Đại học Đồng Tháp" id="heroBg">
+    </div>
+    <div class="hero-sparks"></div>
+
+    <!-- Avatar -->
+    <div class="hero-avatar-wrap">
+      <div class="hero-avatar-ring">
+        <div class="hero-avatar-inner" id="heroAvatar">
+          <span>🎓</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Decorations -->
+    <div class="hero-diploma">📜</div>
+    <div class="hero-cap">🎓</div>
+
+    <!-- Content -->
+    <div class="hero-content">
+      <div class="hero-thu-moi">Thư mời</div>
+      <div class="hero-title" id="heroTitle">LỄ TỐT<br>NGHIỆP</div>
+      <div class="hero-subtitle">GRADUATION CEREMONY 2026</div>
+      <div class="hero-desc" id="heroDesc">
+        Trân trọng kính mời quý thầy cô, gia đình, bạn bè cùng những người thân yêu đến tham dự Lễ Tốt nghiệp của em.
+      </div>
+      <div class="hero-name" id="heroName">Nguyễn Việt Đức</div>
+      <a class="btn-cta" href="#thong-tin">📅 Thông tin sự kiện</a>
+    </div>
+  </section>
+
+  <!-- ══ INFO ══ -->
+  <section class="info-sec reveal" id="thong-tin">
+    <div class="glass-card">
+      <div class="info-row">
+        <div class="info-col">
+          <div class="info-icon">⏰</div>
+          <div class="info-label">THỜI GIAN</div>
+          <div class="info-val" id="infoThoiGian">09:00, Thứ hai</div>
+          <div class="info-sub" id="infoNgay">15/06/2026</div>
+        </div>
+        <div class="info-col">
+          <div class="info-icon">📍</div>
+          <div class="info-label">ĐỊA ĐIỂM</div>
+          <div class="info-val" id="infoDiaDiem">Hội trường H1</div>
+          <div class="info-sub" id="infoDiaChi">783 Phạm Hữu Lầu,<br>Phường Cao Lãnh,<br>Tỉnh Đồng Tháp</div>
+        </div>
+        <div class="info-col">
+          <div class="info-icon">📞</div>
+          <div class="info-label">LIÊN HỆ</div>
+          <div class="info-val">Nhắn tin</div>
+          <div class="info-sub" id="infoLienHe">Messenger / Zalo<br>0769777860</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ THƯ MỜI ══ -->
+  <section class="invite-sec reveal-l">
+    <div class="glass-card">
+      <div class="invite-header">
+        <div class="quote-icon">"</div>
+        <div class="invite-title">Thư mời</div>
+      </div>
+      <div class="invite-body" id="inviteBody">
+        Thân mời quý thầy cô, gia đình, bạn bè cùng những người thân yêu đến tham dự Lễ Tốt nghiệp của em để cùng chia sẻ niềm vui, lưu giữ những khoảnh khắc đáng nhớ và chúc mừng cho cột mốc trưởng thành đầy ý nghĩa này. Sự hiện diện của mọi người sẽ là niềm vinh hạnh, niềm vui và cũng là món quà quý giá nhất dành cho em trong ngày đặc biệt ấy. Em rất mong được đón tiếp và cùng mọi người tạo nên những kỷ niệm đẹp tại buổi lễ ❤️
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ COUNTDOWN ══ -->
+  <section class="countdown-sec reveal" id="countdown-sec">
+    <div class="countdown-card">
+      <div class="cd-label">⏱ ĐẾM NGƯỢC NGÀY TỐT NGHIỆP</div>
+      <div class="cd-grid">
+        <div class="cd-box"><div class="cd-num" id="cdD">--</div><div class="cd-unit">NGÀY</div></div>
+        <div class="cd-box"><div class="cd-num" id="cdH">--</div><div class="cd-unit">GIỜ</div></div>
+        <div class="cd-box"><div class="cd-num" id="cdM">--</div><div class="cd-unit">PHÚT</div></div>
+        <div class="cd-box"><div class="cd-num" id="cdS">--</div><div class="cd-unit">GIÂY</div></div>
+      </div>
+      <div class="cd-datetime">
+        <span class="cd-icon">📅</span>
+        <span id="cdDatetime">09:00, Thứ hai - 15.06.2026</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ GIÁ TRỊ ══ -->
+  <section class="values-sec reveal">
+    <div class="values-grid">
+      <div class="val-card">
+        <span class="val-icon">🎓</span>
+        <div class="val-title">CỘT MỐC ĐÁNG NHỚ</div>
+        <div class="val-desc">Đánh dấu hành trình học tập và trưởng thành</div>
+      </div>
+      <div class="val-card">
+        <span class="val-icon">👨‍👩‍👧‍👦</span>
+        <div class="val-title">CHIA SẺ NIỀM VUI</div>
+        <div class="val-desc">Cùng gia đình, bạn bè chia sẻ khoảnh khắc ý nghĩa</div>
+      </div>
+      <div class="val-card">
+        <span class="val-icon">📸</span>
+        <div class="val-title">LƯU GIỮ KỶ NIỆM</div>
+        <div class="val-desc">Những khoảnh khắc sẽ mãi theo thời gian</div>
+      </div>
+      <div class="val-card">
+        <span class="val-icon">💙</span>
+        <div class="val-title">CẢM ƠN</div>
+        <div class="val-desc">Trân trọng sự hiện diện của mọi người</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ RSVP FOOTER BAR ══ -->
+  <section class="rsvp-sec">
+    <div class="rsvp-full reveal">
+      <div class="rsvp-form-wrap">
+        <div class="rsvp-form-title">✉️ Xác nhận tham dự</div>
+        <label class="field-label">Họ và tên</label>
+        <input class="field-input" id="rsvpName" type="text" placeholder="Nhập tên của bạn...">
+        <label class="field-label">Bạn sẽ tham dự chứ?</label>
+        <div class="radio-group">
+          <label class="radio-opt"><input type="radio" name="attend" value="yes" checked> Có, tôi sẽ tham dự 🎉</label>
+          <label class="radio-opt"><input type="radio" name="attend" value="no"> Tôi bận, rất tiếc không thể tham dự</label>
+        </div>
+        <button class="btn-submit" id="rsvpBtn" onclick="submitRsvp()">📨 XÁC NHẬN THAM DỰ</button>
+        <div class="rsvp-err" id="rsvpErr"></div>
+        <div class="rsvp-thanks" id="rsvpThanks"></div>
+      </div>
+    </div>
+
+    <div style="position:relative;z-index:1;text-align:center;padding:20px 16px 16px;">
+      <div style="font-family:'Dancing Script',cursive;font-size:22px;color:rgba(255,255,255,.5);">
+        Rất hân hạnh được đón tiếp!
+      </div>
+      <div style="font-family:'Inter',sans-serif;font-size:13px;color:rgba(255,255,255,.35);margin-top:4px;">
+        Hẹn gặp bạn tại buổi lễ! ✨
+      </div>
+    </div>
+  </section>
+
+  <div class="footer">
+    © 2026 · Thiết kế bởi <strong>Nguyễn Việt Đức</strong> · Graduate-Dthu
+  </div>
+</div>
+
+<script>
+/* ══════════════════════════════════════════
+   CẤU HÌNH — SỬA TẠI ĐÂY
+══════════════════════════════════════════ */
+const CFG = {
+  ten:       "Nguyễn Việt Đức",
+  nganh:     "Ngôn ngữ Anh",
+  truong:    "Đại học Đồng Tháp",
+  ngay:      15, thang: 6, nam: 2026,
+  gio:       "09:00",
+  diaDiem:   "Hội trường H1",
+  diaChiCT:  "783 Phạm Hữu Lầu, Phường Cao Lãnh, Tỉnh Đồng Tháp",
+  sdt:       "0769777860",
+  loiMoi:    "",
+  scriptUrl: "",
+  anhUrl:    ""   /* đường dẫn ảnh tốt nghiệp */
+};
+
+/* ══ Đọc URL params ══ */
+const P  = Object.fromEntries(new URLSearchParams(location.search));
+const g  = k => P[k] || CFG[k] || '';
+const gN = k => parseInt(P[k] || CFG[k]);
+
+/* ══ FILL DATA ══ */
+(function fill() {
+  const nam   = gN('nam');
+  const thang = gN('thang');
+  const ngay  = gN('ngay');
+  const gio   = g('gio');
+  const thu   = P.thu || thuViet(new Date(nam, thang-1, ngay).getDay());
+  const diaChiCT = P.diaChiChiTiet || P.diaChiCT || CFG.diaChiCT;
+  const sdt   = g('sdt');
+  const ten   = g('ten');
+
+  /* Hero */
+  document.getElementById('heroName').textContent = ten;
+  const loiMoi = P.loiMoi || CFG.loiMoi;
+  if (loiMoi) document.getElementById('inviteBody').textContent = loiMoi;
+
+  /* Info */
+  document.getElementById('infoThoiGian').textContent = gio + ', ' + thu;
+  document.getElementById('infoNgay').textContent     = ngay + '/' + thang + '/' + nam;
+  document.getElementById('infoDiaDiem').textContent  = g('diaDiem');
+  document.getElementById('infoDiaChi').innerHTML     = diaChiCT.replace(/,\s*/g,'<br>');
+  document.getElementById('infoLienHe').innerHTML     = 'Messenger / Zalo' + (sdt ? '<br>' + sdt : '');
+
+  /* Countdown datetime label */
+  document.getElementById('cdDatetime').textContent =
+    gio + ', ' + thu + ' - ' + ngay + '.' + String(thang).padStart(2,'0') + '.' + nam;
+
+  /* Ảnh */
+  loadAnh(ten);
+
+  /* Title */
+  document.title = 'Thiệp tốt nghiệp — ' + ten;
+})();
+
+/* ══ Load ảnh (localStorage ưu tiên) ══ */
+function loadAnh(ten) {
+  let src = null;
+  if (P.imgKey)  src = localStorage.getItem(P.imgKey) || sessionStorage.getItem(P.imgKey);
+  if (!src && P.anhUrl)    src = P.anhUrl;
+  if (!src && CFG.anhUrl)  src = CFG.anhUrl;
+  if (src) {
+    const av  = document.getElementById('heroAvatar');
+    const img = document.createElement('img');
+    img.src = src;
+    img.alt = ten;
+    av.innerHTML = '';
+    av.appendChild(img);
+  }
+}
+
+/* ══ Countdown ══ */
+(function() {
+  const nam = gN('nam'), thang = gN('thang'), ngay = gN('ngay');
+  const gioArr = g('gio').split(':');
+  const target = new Date(nam, thang-1, ngay, +gioArr[0], +(gioArr[1]||0));
+  function tick() {
+    const diff = target - Date.now();
+    if (diff <= 0) {
+      ['cdD','cdH','cdM','cdS'].forEach(id => document.getElementById(id).textContent = '00');
+      return;
+    }
+    set('cdD', Math.floor(diff/86400000));
+    set('cdH', Math.floor(diff%86400000/3600000));
+    set('cdM', Math.floor(diff%3600000/60000));
+    set('cdS', Math.floor(diff%60000/1000));
+  }
+  function set(id, v) { document.getElementById(id).textContent = pad(v); }
+  tick(); setInterval(tick, 1000);
+})();
+
+/* ══ RSVP ══ */
+async function submitRsvp() {
+  const name   = document.getElementById('rsvpName').value.trim();
+  const attend = document.querySelector('input[name=attend]:checked').value;
+  const err    = document.getElementById('rsvpErr');
+  const thanks = document.getElementById('rsvpThanks');
+  const btn    = document.getElementById('rsvpBtn');
+  err.style.display = 'none';
+  if (!name) {
+    document.getElementById('rsvpName').focus();
+    err.textContent = '⚠️ Vui lòng nhập họ và tên.';
+    err.style.display = 'block'; return;
+  }
+  btn.disabled = true; btn.textContent = 'Đang gửi...';
+  const url = P.script || CFG.scriptUrl;
+  if (url) {
+    try {
+      await fetch(url, { method:'POST', mode:'no-cors',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ ten: name, thamDu: attend==='yes'?'Có, sẽ tham dự':'Không thể tham dự', thiep: g('ten') })
+      });
+    } catch(_) {}
+  }
+  btn.style.display = 'none';
+  thanks.innerHTML  = 'Cảm ơn <strong>' + name + '</strong>! 🌸<br>Hẹn gặp bạn tại buổi lễ ❤️';
+  thanks.style.display = 'block';
+}
+
+/* ══ Music ══ */
+let playing = false;
+function toggleMusic() {
+  const a = document.getElementById('bgAudio');
+  const b = document.getElementById('musicBtn');
+  if (playing) { a.pause(); b.textContent = '🎵 Bật nhạc'; }
+  else { a.play().catch(()=>{}); b.textContent = '🔊 Tắt nhạc'; }
+  playing = !playing;
+}
+
+/* ══ Theme switcher ══ */
+document.getElementById('themeDots').addEventListener('click', e => {
+  const dot = e.target.closest('.theme-dot');
+  if (!dot) return;
+  const t = dot.dataset.t;
+  document.documentElement.setAttribute('data-theme', t === 'blue' ? '' : t);
+  document.querySelectorAll('.theme-dot').forEach(d => d.classList.toggle('active', d === dot));
+});
+
+/* ══ Scroll progress ══ */
+window.addEventListener('scroll', () => {
+  const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
+  document.getElementById('scrollProg').style.width = pct + '%';
+}, { passive: true });
+
+/* ══ Reveal on scroll ══ */
+const io = new IntersectionObserver(
+  entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('show'); }),
+  { threshold: 0.12 }
+);
+document.querySelectorAll('.reveal, .reveal-l').forEach(el => io.observe(el));
+
+/* ══ Particles ══ */
+(function initParticles() {
+  const canvas = document.getElementById('particles');
+  const ctx    = canvas.getContext('2d');
+  let W, H, pts = [];
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+  for (let i = 0; i < 55; i++) pts.push({
+    x: Math.random()*100, y: Math.random()*100,
+    vx: (Math.random()-.5)*.06, vy: (Math.random()-.5)*.06,
+    r: Math.random()*1.4+.4,
+    a: Math.random()*.6+.2
+  });
+  function draw() {
+    ctx.clearRect(0,0,W,H);
+    pts.forEach(p => {
+      p.x += p.vx; p.y += p.vy;
+      if (p.x<0) p.x=100; if (p.x>100) p.x=0;
+      if (p.y<0) p.y=100; if (p.y>100) p.y=0;
+      ctx.beginPath();
+      ctx.arc(p.x/100*W, p.y/100*H, p.r, 0, Math.PI*2);
+      ctx.fillStyle = `rgba(180,200,255,${p.a})`;
+      ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ══ Helpers ══ */
+function pad(n) { return String(n).padStart(2,'0'); }
+function thuViet(d) {
+  return ['Chủ nhật','Thứ hai','Thứ ba','Thứ tư','Thứ năm','Thứ sáu','Thứ bảy'][d];
+}
+</script>
+</body>
+</html>
