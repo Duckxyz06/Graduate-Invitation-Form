@@ -425,30 +425,7 @@ ua.addEventListener('drop', e => {
     const dt  = new DataTransfer(); dt.items.add(f); inp.files = dt.files;
     previewImg(inp);
   }
-});
 
-/* ══════════════════════════════════════════
-   THỬ NHẠC
-══════════════════════════════════════════ */
-function testMusic() {
-  const url    = document.getElementById('musicUrl').value.trim();
-  const status = document.getElementById('musicStatus');
-  const audio  = document.getElementById('testAudio');
-  if (!url) { status.textContent = '⚠️ Vui lòng nhập link nhạc trước.'; return; }
-  status.textContent = '⏳ Đang kiểm tra...';
-  audio.src  = url;
-  audio.load();
-  audio.oncanplaythrough = () => {
-    status.textContent = '✅ Link nhạc hoạt động tốt!';
-    audio.pause(); audio.currentTime = 0;
-  };
-  audio.onerror = () => {
-    status.textContent = '❌ Không tải được nhạc. Kiểm tra lại URL (phải là link Raw từ GitHub).';
-  };
-  audio.play().catch(() => {
-    status.textContent = '⚠️ Trình duyệt chặn autoplay — nhưng link có thể vẫn đúng. Mở thiệp để kiểm tra.';
-  });
-}
 
 /* ══════════════════════════════════════════
    TẠO THIỆP
