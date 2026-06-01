@@ -149,11 +149,13 @@ body {
    SECTION 1 — HERO
 ══════════════════════════════════════════ */
 .hero {
+  position: relative;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  justify-content: center; /* đổi từ flex-end */
+  justify-content: center;
   padding-top: 80px;
+  overflow: hidden;
 }
 /* School photo full bleed */
 .hero-bg {
@@ -602,7 +604,7 @@ body {
 </div>
 
 <!-- Audio -->
-<audio id="bgAudio" loop><source src="https://raw.githubusercontent.com/Duckxyz06/Graduate-Invitation-Form/6b8b1576c5870bfb6611da8f289caaaab3cdd929/freecompress-nh%E1%BA%A1c.mp3" type="audio/mpeg">
+<audio id="bgAudio" loop><source src="https://raw.githubusercontent.com/Duckxyz06/Graduate-Invitation-Form/6b8b1576c5870bfb6611da8f289caaaab3cdd929/freecompress-nh%E1%BA%A1c.mp3" type="audio/mpeg"></audio>
 
 <!-- Top bar -->
 <div class="topbar">
@@ -819,7 +821,7 @@ const gN = k => parseInt(P[k] || CFG[k]);
     gio + ', ' + thu + ' - ' + ngay + '.' + String(thang).padStart(2,'0') + '.' + nam;
 
   /* Ảnh */
- // loadAnh(ten);
+  loadAnh(ten);
 
   /* Title */
   document.title = 'Thiệp tốt nghiệp — ' + ten;
